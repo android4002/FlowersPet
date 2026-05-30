@@ -1,6 +1,7 @@
 import logging
 import json
 import os
+import aiofiles
 import uuid
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
@@ -133,9 +134,9 @@ async def upload_product_image(file: UploadFile = File(...)):
         unique_name = f"upload_{uuid.uuid4().hex}{ext}"
         file_path = os.path.join(UPLOAD_DIR, unique_name)
 
-        with open(file_path, "wb") as f:
+        async with aiofiles.open(file_path, "wb") as f:
             while content := await file.read(1024 * 1024):
-                f.write(content)
+                await f.write(content)
 
         relative_url = f"/images/products/{unique_name}"
 
