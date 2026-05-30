@@ -12,3 +12,4 @@ itsdangerous>=2.0.0
 greenlet>=3.0.0
 alembic>=1.13.0
 aiogram>=3.7.0
+reportlab==4.1.0
