@@ -92,11 +92,11 @@ async def save_sort_order(payload: UpdateSortOrderRequest, db: AsyncConnection =
     try:
         async with db.transaction():
             async with db.cursor() as cur:
-                data = [(index + 1, prod_id) for index, prod_id in enumerate(payload.ids)]
-                await cur.executemany(
-                    "UPDATE products SET sort_order = %s WHERE id = %s",
-                    data
-                )
+                for index, prod_id in enumerate(payload.ids):
+                    await cur.execute(
+                        "UPDATE products SET sort_order = %s WHERE id = %s",
+                        (index + 1, prod_id)
+                    )
 
                 await cur.execute(
                     "INSERT INTO admin_action_logs (user_id, action, details) VALUES (%s, %s, %s)",
@@ -165,14 +165,14 @@ async def list_products(
     """
     offset = (page - 1) * limit
     logger.info(f"DB Query: Fetching products with pagination. Filter category_id={category_id}, page={page}, limit={limit}")
-    
+
     async with db.cursor(row_factory=dict_row) as cur:
         if category_id is not None:
             await cur.execute(
                 """
-                SELECT id, category_id, name, description, price, price AS base_price, discount_price, image_url, stock, is_active, rating, reviews_count, images, details, sort_order 
-                FROM products 
-                WHERE category_id = %s 
+                SELECT id, category_id, name, description, price, price AS base_price, discount_price, image_url, stock, is_active, rating, reviews_count, images, details, sort_order
+                FROM products
+                WHERE category_id = %s
                 ORDER BY sort_order ASC, id ASC
                 LIMIT %s OFFSET %s
                 """,
@@ -181,8 +181,8 @@ async def list_products(
         else:
             await cur.execute(
                 """
-                SELECT id, category_id, name, description, price, price AS base_price, discount_price, image_url, stock, is_active, rating, reviews_count, images, details, sort_order 
-                FROM products 
+                SELECT id, category_id, name, description, price, price AS base_price, discount_price, image_url, stock, is_active, rating, reviews_count, images, details, sort_order
+                FROM products
                 ORDER BY sort_order ASC, id ASC
                 LIMIT %s OFFSET %s
                 """,
@@ -206,22 +206,22 @@ async def get_product(
     Retrieve details of a single product by its ID.
     """
     logger.info(f"DB Query: Fetching product details for ID: {product_id}")
-    
+
     async with db.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            SELECT id, category_id, name, description, price, discount_price, image_url, stock, is_active, rating, reviews_count, images, details 
-            FROM products 
+            SELECT id, category_id, name, description, price, discount_price, image_url, stock, is_active, rating, reviews_count, images, details
+            FROM products
             WHERE id = %s
             """,
             (product_id,)
         )
         row = await cur.fetchone()
-        
+
         if not row:
             logger.warning(f"DB Query Failed: Product with ID {product_id} not found.")
             raise HTTPException(status_code=404, detail="Product not found")
-            
+
         logger.info(f"DB Query Success: Product details found for ID: {product_id}")
         return row
 
@@ -283,7 +283,7 @@ async def update_product(product_id: int, payload: UpdateProductRequest, db: Asy
         price_val = payload.price if payload.price is not None else payload.base_price
         updates = []
         params = []
-        
+
         if payload.name is not None:
             updates.append("name = %s")
             params.append(payload.name)
@@ -320,13 +320,13 @@ async def update_product(product_id: int, payload: UpdateProductRequest, db: Asy
             import json
             updates.append("images = %s")
             params.append(json.dumps(payload.images))
-            
+
         if not updates:
             return {"status": "success", "message": "No updates applied"}
-            
+
         params.append(product_id)
         query = f"UPDATE products SET {', '.join(updates)} WHERE id = %s"
-        
+
         async with db.transaction():
             async with db.cursor() as cur:
                 await cur.execute(query, tuple(params))
@@ -339,6 +339,3 @@ async def update_product(product_id: int, payload: UpdateProductRequest, db: Asy
     except Exception as e:
         logger.exception(f"Error updating product {product_id}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-
