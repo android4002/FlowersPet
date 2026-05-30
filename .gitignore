@@ -1,0 +1,70 @@
+# ─── Secrets & Environment ───────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# ─── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.log
+
+# ─── Alembic ─────────────────────────────────────────────────────────────────
+# Keep migrations, ignore generated temp files
+backend/alembic/versions/__pycache__/
+
+# ─── Node / Next.js ──────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+frontend/.next/
+frontend/node_modules/
+frontend/tsconfig.tsbuildinfo
+
+# ─── Playwright ──────────────────────────────────────────────────────────────
+frontend/playwright-report/
+frontend/test-results/
+
+# ─── Uploads / Media ─────────────────────────────────────────────────────────
+backend/uploads/
+backend/static/uploads/
+
+# ─── Scratch / Temp files ────────────────────────────────────────────────────
+backend/scratch/
+backend/cookies.txt
+backend/temp_*.py
+backend/add_*.py
+backend/migrate.py
+backend/test_*.py
+backend/optimize_images.py
+backend/run_windows.bat
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+/tmp/

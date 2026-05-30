@@ -1,0 +1,137 @@
+{% extends "sqladmin/layout.html" %}
+
+{% block content %}
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <!-- Page pre-title -->
+                <div class="page-pretitle">
+                    Overview
+                </div>
+                <h2 class="page-title">
+                    👑 Планета Цветов — Панель управления
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-cards">
+            <!-- Users Card -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); transition: transform 0.2s;">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-primary text-white avatar" style="border-radius: 8px; width: 48px; height: 48px;">
+                                    <i class="fa-solid fa-users fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium text-muted subheader">Всего пользователей</div>
+                                <div class="h1 mb-0 font-weight-bold text-dark">{{ stats.users.scalar_one() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Card -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); transition: transform 0.2s;">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-success text-white avatar" style="border-radius: 8px; width: 48px; height: 48px;">
+                                    <i class="fa-solid fa-receipt fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium text-muted subheader">Всего заказов</div>
+                                <div class="h1 mb-0 font-weight-bold text-dark">{{ stats.orders.scalar_one() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Card -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); transition: transform 0.2s;">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-warning text-white avatar" style="border-radius: 8px; width: 48px; height: 48px;">
+                                    <i class="fa-solid fa-coins fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium text-muted subheader">Транзакции токенов</div>
+                                <div class="h1 mb-0 font-weight-bold text-dark">{{ stats.transactions.scalar_one() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Separation of Concerns Block -->
+        <div class="row row-cards mt-3">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; border-left: 5px solid #206bc4 !important;">
+                    <div class="card-body">
+                        <h3 class="card-title text-primary font-weight-bold"><i class="fa-solid fa-desktop me-2"></i> Обязанности Web-панели (SQLAdmin)</h3>
+                        <p class="text-muted mb-3">Основной инструмент для контент-менеджмента и администрирования:</p>
+                        <ul class="list-unstyled space-y-2">
+                            <li class="d-flex align-items-start mb-2"><i class="fa-solid fa-circle-plus text-success me-2 mt-1"></i> <div><b>Создание и удаление:</b> Добавление новых букетов, категорий, полное удаление товаров.</div></li>
+                            <li class="d-flex align-items-start mb-2"><i class="fa-solid fa-images text-info me-2 mt-1"></i> <div><b>Тяжелый контент:</b> Загрузка фото, создание фотогалерей, заполнение подробного описания.</div></li>
+                            <li class="d-flex align-items-start mb-2"><i class="fa-solid fa-user-gear text-warning me-2 mt-1"></i> <div><b>Персонал:</b> Добавление сотрудников Telegram, управление их правами и активация аккаунтов.</div></li>
+                            <li class="d-flex align-items-start"><i class="fa-solid fa-shield-halved text-danger me-2 mt-1"></i> <div><b>Безопасность:</b> Просмотр системных логов действий агентов и транзакций токенов.</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; border-left: 5px solid #2fb344 !important;">
+                    <div class="card-body">
+                        <h3 class="card-title text-success font-weight-bold"><i class="fa-solid fa-mobile-screen-button me-2"></i> Обязанности Telegram-бота</h3>
+                        <p class="text-muted mb-3">Мобильный пульт управления для оперативного контроля «на ходу»:</p>
+                        <ul class="list-unstyled space-y-2">
+                            <li class="d-flex align-items-start mb-2"><i class="fa-solid fa-truck-ramp-box text-success me-2 mt-1"></i> <div><b>Складской учет:</b> Быстрое изменение остатков на складе при сборке букетов флористом.</div></li>
+                            <li class="d-flex align-items-start mb-2"><i class="fa-solid fa-tags text-warning me-2 mt-1"></i> <div><b>Ценообразование:</b> Быстрое редактирование базовых цен и запуск горячих скидок.</div></li>
+                            <li class="d-flex align-items-start mb-2"><i class="fa-solid fa-eye-slash text-danger me-2 mt-1"></i> <div><b>Отображение:</b> Мгновенное скрытие букетов с витрины сайта (если закончились цветы).</div></li>
+                            <li class="d-flex align-items-start"><i class="fa-solid fa-bell text-primary me-2 mt-1"></i> <div><b>Уведомления:</b> Моментальное информирование о заказах, просмотр дневного отчета о выручке.</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cards mt-3">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                    <div class="card-body">
+                        <h3 class="card-title text-dark font-weight-bold"><i class="fa-solid fa-circle-info text-info me-2"></i> Быстрый доступ к управлению</h3>
+                        <p class="text-muted">Используйте боковое меню для управления товарами, заказами и правами доступа сотрудников в Telegram.</p>
+                        <div class="d-flex gap-2">
+                            <a href="/admin/product/list" class="btn btn-outline-primary" style="border-radius: 6px;">
+                                <i class="fa-solid fa-box-open me-2"></i> Товары
+                            </a>
+                            <a href="/admin/order/list" class="btn btn-outline-success" style="border-radius: 6px;">
+                                <i class="fa-solid fa-receipt me-2"></i> Заказы
+                            </a>
+                            <a href="/admin/telegrammanager/list" class="btn btn-outline-warning" style="border-radius: 6px;">
+                                <i class="fa-solid fa-users-cog me-2"></i> Права Telegram
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

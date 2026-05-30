@@ -1,0 +1,151 @@
+{
+  "version": "2026.05",
+  "project_metadata": {
+    "name": "Planeta Tsvetov Storefront",
+    "stack": {
+      "frontend": "Next.js 15 (App Router), TS 5.x, Tailwind v4, shadcn/ui",
+      "backend": "FastAPI (Python 3.12+), SQLAlchemy 2.0 (Async), Pydantic V2",
+      "database": "Neon PostgreSQL (Serverless)",
+      "architecture": "Feature-Driven Architecture (FDA)"
+    }
+  },
+  "mcp_orchestration": {
+    "filesystem": {
+      "priority": 1,
+      "status": "enabled",
+      "policy": "Запрещена полная перезапись файлов > 100 строк при рядовых точечных правках. При масштабном архитектурном рефакторинге (перенос бизнес-логики, разделение крупных компонентов) полная замена файла допускается ИСКЛЮЧИТЕЛЬНО после предварительного согласования плана изменений с пользователем. Перед изменением конфигурационных файлов (next.config, vite.config, pyproject.toml, а также CSS-файлов, содержащих директиву @theme или @import) обязательно считывать их текущее состояние целиком."
+    },
+    "command_executor": {
+      "priority": 2,
+      "status": "restricted",
+      "security_mode": "STRICT_REGEX",
+      "allowed_commands_regex": [
+        "^npm run lint(\\s+--\\s+--fix)?$",
+        "^npm run build$",
+        "^npm run dev$",
+        "^npm run test$",
+        "^pytest(\\s+[a-zA-Z0-9_\\-/\\\\.]+)*$",
+        "^pytest\\s+--cov(=[a-zA-Z0-9_\\-/\\\\.]+)?(\\s+[a-zA-Z0-9_\\-/\\\\.]+)*$",
+        "^ruff check\\s+(--fix\\s+)?([a-zA-Z0-9_\\-/\\\\.]+)$",
+        "^ruff format\\s+([a-zA-Z0-9_\\-/\\\\.]+)$",
+        "^alembic\\s+(current|history|check)$",
+        "^alembic upgrade head$",
+        "^alembic downgrade\\s+([a-zA-Z0-9_]+|-1)$",
+        "^alembic revision --autogenerate -m \"[a-zA-Z0-9_\\s-]+\"$",
+        "^git status$",
+        "^git diff(\\s+[a-zA-Z0-9_\\-/\\\\.]+)*$",
+        "^git log --oneline -n \\d+$",
+        "^git add\\s+([a-zA-Z0-9_\\-/\\\\.]+)(\\s+[a-zA-Z0-9_\\-/\\\\.]+)*$",
+        "^git commit -m \"[a-zA-Z0-9_\\s\\-:\\(\\)\\!а-яА-ЯёЁ\\.]+\"$"
+      ],
+      "forbidden_patterns": [
+        "rm\\s+-rf", "curl", "wget", "chmod", "sudo", "truncate",
+        "[>|<|&|;|\\|\\n\\r`\\$]", "\\$\\("
+      ],
+      "policy": "Выполнение команд строго по маске. Разрешен запуск тестовых фреймворков (pytest, npm run test), dev-сервера (npm run dev), диагностических команд git (diff, log) и alembic check. Использование точки (git add .) запрещено для предотвращения случайной утечки секретов."
+    },
+    "postgres": {
+      "priority": 1,
+      "status": "enabled",
+      "policy": "Инструмент вызывается ИСКЛЮЧИТЕЛЬНО для контекста бэкенда (директория /backend). Слой Next.js изолирован от прямого доступа к DB. Цепочка: 1. Инспекция DDL таблицы -> 2. Генерация/обновление Pydantic-схем -> 3. Написание асинхронного SQLAlchemy кода -> 4. Генерация миграции Alembic. Прямой сырой SQL запрещен. Операции записи выполнять строго внутри транзакционного контекста. Перед запуском alembic upgrade head агент обязан выполнить alembic current или аналогичный легкий запрос для 'прогрева' засыпающего инстанса Neon PostgreSQL. В случае таймаута — повторить попытку один раз перед фатальной остановкой."
+    },
+    "brave_search": {
+      "priority": 3,
+      "status": "enabled",
+      "policy": "Используй поиск только при возникновении ModuleNotFoundError или критических ошибок типизации внешних библиотек. Максимум 3 поисковых запроса на одну сессию отладки."
+    },
+    "shadcn_ui": {
+      "priority": 1,
+      "status": "enabled",
+      "policy": "Добавление UI-элементов выполняется ИСКЛЮЧИТЕЛЬНО через вызов целевого MCP-инструмента `@heilgar/shadcn-ui-mcp-server` (команда `install-component`). Прямой запуск npx через терминал command_executor заблокирован из соображений безопасности. Запрещено писать кастомные обертки над Radix UI вручную."
+    },
+    "figma_context": {
+      "priority": 2,
+      "status": "enabled",
+      "policy": "Используй извлечение метаданных фрейма для точного копирования отступов, размеров, шрифтов и скруглений из макета. Верстка «на глаз» запрещена."
+    },
+    "magic_mcp": {
+      "priority": 2,
+      "status": "enabled",
+      "policy": "Применяй триггер /ui для генерации адаптивных карточек, форм и каруселей на базе библиотеки 21st.dev."
+    },
+    "sequential_thinking": {
+      "priority": 1,
+      "status": "enabled",
+      "policy": "Включай инструмент пошаговой декомпозиции при обнаружении циклических импортов в Python или конфликтов типов в TypeScript. Проходи не менее 3 шагов валидации гипотезы перед предложением ответа."
+    },
+    "docker_mcp": {
+      "priority": 2,
+      "status": "restricted",
+      "allowed_tools": ["container-logs", "container-status", "list-containers"],
+      "policy": "Используй строго для диагностики контейнеров FastAPI и кэша. Запрещено удалять образы (image prune) и останавливать контейнеры прод-окружения."
+    },
+    "google_sheets": {
+      "priority": 3,
+      "status": "restricted",
+      "allowed_services": ["sheets.googleapis.com"],
+      "policy": "Разрешено использовать только инструмент записи строк для дублирования финансовых отчетов в Google Таблицу менеджера."
+    }
+  },
+  "external_apis": {
+    "stripe": {
+      "status": "enabled",
+      "allowed_scopes": ["payment_intents", "webhooks", "products"],
+      "policy": "Генерация логики оплаты разрешена строго в backend/app/features/orders/services/payment.py. Все ответы API должны валидироваться через схемы Pydantic V2."
+    },
+    "vercel": {
+      "status": "enabled",
+      "policy": "Разрешено использовать Vercel Build Errors строго для анализа ошибок сборки Next.js 15. Менять настройки доменов запрещено."
+    }
+  },
+  "security_policies": {
+    "blacklist": [
+      "@supabase/mcp",
+      "supabase-cli",
+      "notion-mcp",
+      "obsidian-mcp-server"
+    ],
+    "enforcement": "CRITICAL_HALT. При обнаружении запросов к запрещенным инструментам немедленно прервать выполнение. Использование Supabase заблокировано: стек зафиксирован на FastAPI + Neon PostgreSQL. Запрещено считывать внешние персональные базы знаний."
+  },
+  "architectural_constraints": {
+    "frontend": {
+      "standard": "https://github.com/alan2207/bulletproof-react",
+      "structure": "Код изолирован в /features. Папки внутри фичи: /components, /api, /types, /hooks. Взаимодействие между фичами — только через Public API (index.ts).",
+      "logic": "Server Components по умолчанию. 'use client' — только для интерактивных элементов. Доступ к API браузера строго после проверки типа window."
+    },
+    "backend": {
+      "standard": "https://github.com/zhanymkanov/fastapi-best-practices",
+      "structure": "FDA структура. Слой бизнес-логики изолирован в /features. Перекрестные зависимости между фичами на уровне слоев Routers/Services/Repository ЗАПРЕЩЕНЫ. Если фиче А требуются данные фичи Б, взаимодействие происходит исключительно через вызов сервисного слоя Public API фичи Б. При возникновении циклической зависимости на уровне бизнес-логики, общая логика выносится в слой /backend/app/core или /backend/app/shared.",
+      "typing": "Strict Type Hinting, async def, полное отсутствие Any. Возврат строго через Pydantic-схемы в response_model."
+    }
+  },
+  "testing": {
+    "backend_strategy": {
+      "framework": "pytest",
+      "rules": "Каждая новая бизнес-фича (feature) в бэкенде обязана покрываться модульными и интеграционными тестами. Использовать асинхронные фикстуры для эмуляции транзакций БД."
+    },
+    "frontend_strategy": {
+      "framework": "Playwright / Vitest",
+      "rules": "Критические сценарии (корзина, авторизация, процесс оформления заказа) покрываются e2e-тестами на Playwright."
+    }
+  },
+  "observability": {
+    "logging": {
+      "format": "Structured JSON Logging (на бэкенде)",
+      "policy": "Все критические бизнес-события (платежи, успешные заказы, отправка Telegram-уведомлений) логируются со структурированным контекстом. Строго ЗАПРЕЩЕНО выводить в логи персональные данные клиентов (PII), токены авторизации и пароли."
+    },
+    "error_tracking": {
+      "tools": "Sentry / OpenTelemetry integration",
+      "policy": "Аварийные завершения эндпоинтов (5xx) и необработанные ошибки фронтенда автоматически репортятся в систему отслеживания ошибок с контекстом сессии."
+    },
+    "performance": {
+      "threshold": "Эндпоинты с p95 latency > 500ms логируются как slow_request со structured-контекстом: endpoint, method, duration_ms, user_id (без PII). Агент обязан проверять наличие индексов на полях фильтрации при работе с запросами к БД."
+    }
+  },
+  "quality_gate": {
+    "typescript": "Запрет 'any' и 'as unknown'. Валидация пропсов через интерфейсы.",
+    "python": "Валидация входящих/исходящих данных через Pydantic V2. Docstrings для сложных методов.",
+    "css": "Строго Tailwind v4 utility-first. Запрещена конкатенация строк для создания динамических имен классов (например, `bg-${color}-500`). Разрешено использование утилиты `cn()` для условного рендеринга статических классов. Для динамических стилей (цвет, фон) использовать CSS-переменные через атрибут style (напр. style={{ '--dynamic-bg': color } as React.CSSProperties}), использование инлайн-классов типа bg-[var(--dynamic-bg)] разрешено.",
+    "coverage": "Минимальный порог покрытия тестами: 70% для бизнес-логики (/services, /repositories). Агент запускает pytest --cov после написания новой фичи и репортит итоговый процент покрытия в ответе."
+  }
+}

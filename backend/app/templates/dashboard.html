@@ -1,0 +1,147 @@
+{% extends "sqladmin/layout.html" %}
+
+{% block content %}
+<div class="container-xl">
+    <!-- Page Header -->
+    <div class="page-header d-print-none">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="page-title text-primary">
+                    Панель мониторинга мультиагентной системы
+                </h2>
+                <div class="text-muted mt-1">Интегральные метрики агрегированы за последние 24 часа</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-body">
+        <div class="row row-cards">
+            <!-- Card: Token Usage -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm">
+                    <div class="card-status-top bg-{{ token_status }}"></div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-{{ token_status }}-lt text-{{ token_status }} avatar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-coins" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                       <path d="M9 14c0 1.657 2.686 3 6 3s6 -1.343 6 -3s-2.686 -3 -6 -3s-6 1.343 -6 3z"></path>
+                                       <path d="M9 14v4c0 1.656 2.686 3 6 3s6 -1.344 6 -3v-4"></path>
+                                       <path d="M3 6c0 1.657 2.686 3 6 3s6 -1.343 6 -3s-2.686 -3 -6 -3s-6 1.343 -6 3z"></path>
+                                       <path d="M3 6v10c0 1.657 2.686 3 6 3"></path>
+                                       <path d="M15 10v4c0 .356 -.123 .694 -.34 1"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">
+                                    Расход токенов (24ч)
+                                </div>
+                                <div class="text-muted">
+                                    Лимит: {{ quota_threshold | int }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <span class="h1 mb-0 {% if token_status == 'danger' %}text-danger{% else %}text-success{% endif %}">
+                                    {{ total_tokens | int }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Active Sessions -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm">
+                    <div class="card-status-top bg-primary"></div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-primary-lt text-primary avatar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                       <circle cx="9" cy="7" r="4"></circle>
+                                       <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+                                       <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                       <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">
+                                    Активные сессии
+                                </div>
+                                <div class="text-muted">
+                                    Многоагентные сессии
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <span class="h1 mb-0 text-primary">
+                                    {{ active_sessions }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Avg Latency -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-sm">
+                    <div class="card-status-top bg-info"></div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-info-lt text-info avatar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-activity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                       <path d="M3 12h4l3 8l4 -16l3 8h4"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-medium">
+                                    Задержка LLM (Средняя)
+                                </div>
+                                <div class="text-muted">
+                                    Время генерации (сек)
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <span class="h1 mb-0 text-info">
+                                    {{ avg_latency }}s
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h3 class="card-title text-muted">Состояние квот и лимитов</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if token_status == 'danger' %}
+                        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+                            <h4 class="alert-title font-weight-bold">Внимание: Критический расход лимита токенов!</h4>
+                            <div class="text-muted">Суммарный расход токенов за последние 24 часа превысил установленный порог безопасности в {{ quota_threshold | int }} токенов. Пожалуйста, оптимизируйте промпты или обновите подписку API квоты.</div>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-success border-0 shadow-sm" role="alert">
+                            <h4 class="alert-title font-weight-bold">Показатели лимитов в норме</h4>
+                            <div class="text-muted">Система работает в штатном режиме. Текущее потребление токенов составляет {{ (total_tokens / quota_threshold * 100) | round(1) }}% от суточного лимита.</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

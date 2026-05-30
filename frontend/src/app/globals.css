@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --foreground-rgb: 45, 45, 45;
+  --background-start-rgb: 253, 253, 253;
+  --background-end-rgb: 253, 253, 253;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 6s ease-in-out infinite 1.5s;
+}
+
+@keyframes flyToCart {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.9;
+    transform: translate3d(0, -30px, 0) scale(0.9);
+  }
+  100% {
+    left: calc(100vw - 75px);
+    top: 20px;
+    transform: translate3d(0, 0, 0) scale(0.12);
+    opacity: 0.1;
+  }
+}
+
+.animate-fly-to-cart {
+  animation: flyToCart 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes flyToCartSmooth {
+  0% {
+    transform: translate3d(var(--delta-x), var(--delta-y), 0) scale(1.0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.1);
+    opacity: 0;
+  }
+}
+
+
+
+
